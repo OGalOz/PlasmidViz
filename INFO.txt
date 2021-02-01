@@ -1,0 +1,34 @@
+
+Starts with file 'plasmid_mapper.py'
+
+We go from a genbank file, config file, and output name
+
+TESTED: prepare_gbk.py
+TESTING: prep_py_feat.py
+
+We know what a genbank file,
+what is the config file?
+What is the output name?
+
+
+JS Config Objects: (PlasmidConfig.js)
+    1. plasmid_config_obj:
+        
+
+JS Data Objects:
+    1. Primary plasmid info object (window.plasmid_object)
+       plasmid_aux:
+            plasmid_name: str 
+            plasmid_length: int
+            num_features: int
+            old_gb_name: str 
+       feat_info_list: (list<feature_info>)
+            feature_info: list<feature_start (int),
+                               feature_end (int),
+                               strand (str) (+/-),
+                               feature_type (str),
+                               feature_name (str)>
+       plasmid_seq: str
+            The plasmid sequence itself ("+" strand)
+
+

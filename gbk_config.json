@@ -1,0 +1,192 @@
+{
+    "file_type": "genbank",
+
+    "genbank_info": {
+        "name_tag": "locus_tag",
+        "multiple_name_tags" : ["locus_tag","gene","label","old_locus_tag","protein_id"],
+        "name_tags": ["locus_tag","gene","label","old_locus_tag","protein_id"],
+        "gap_names": ["gap", "feature_gap", "backbone"],
+        "types_dict": {
+            "promoter": ["promoter"],
+            "terminator": ["terminator"],
+            "rbs": ["rbs"],
+            "cds": ["cds", "output", "CDS"],
+            "scar": ["scar"],
+            "ribozyme": ["ribozyme"],
+            "backbone": ["backbone"],
+            "misc_feature": ["misc_feature"],
+            "unknown": ["", "unsure", "unknown"]
+        },
+        "colors_dict": {
+            "promoter": "#D2B48C",
+            "terminator":"#FF0000",
+            "rbs":"#BC8F8F",
+            "cds": "#00FFFF",
+            "scar":"#808080",
+            "ribozyme":"#0000ff",
+            "backbone": "black",
+            "misc_feature": "#ffccff",
+            "unknown": "#d9d9d9"
+        },
+        "max_num_feat" : 100,
+        "cello_bool": true
+    },
+    "js_info": {
+            "circle_radius": 250, 
+            "complementary_radius": 230,
+            "circle_line_width": 8, 
+            "center_coordinates":[500,500],
+            "pointer_len_short": 70,
+            "pointer_len_medium": 95,
+            "pointer_len_long": 120,
+            "midpoint_distance": 30,
+            "pointer_distance": 5,
+            "pointer_thick":1,
+            "pointer_color": "black",
+            "text_size" : 25,
+            "text_color": "black",
+            "title_text_size" : 28,
+            "title_text_color": "#333",
+            "max_title_length" : 35,
+            "highlight_color": "#FFFFD5",
+            "delete_box_info": {
+                "top_left_corner_x": 0,
+                "top_left_corner_y": 300,
+                "width": 50,
+                "height": 50,
+                "internal_color": "red",
+                "border_color": "black",
+                "img_link": "delete_img.png",
+                "include_bool" : true
+
+            },
+            "reset_box_info": {
+                "top_left_corner_x": 0,
+                "top_left_corner_y": 350,
+                "width": 50,
+                "height": 50,
+                "internal_color": "blue",
+                "border_color": "black",
+                "img_link": "reset_img.png",
+                "include_bool" : false
+            },
+            "legend_box_info": {
+                "top_left_corner_x": 0,
+                "top_left_corner_y": 700,
+                "width": 120,
+                "height": 300,
+                "text_box_width": 80,
+                "color_box_width": 40,
+                "title_text": "Color Legend",
+                "border_color": "black",
+                "internal_color": "white",
+                "row_font_weight": "normal",
+                "row_font_color": "black",
+                "row_font_size": 12,
+                "title_font_weight": "bold",
+                "title_font_color": "black",
+                "title_font_size": 12,
+
+                "include_bool" : true
+            },
+            "text_rect_info": {
+                "x_diff": 8,
+                "y_diff": 20,
+                "border_color": "gray",
+                "clicked_border_color": "black",
+                "internal_color": "white",
+                "clicked_internal": "#E6E6FA"
+            },
+            "gap_arc_info" : {
+                "circle_line_width": 3,
+                "color": "black"
+            },
+            "promoter_info" : {
+                "include_bool" : false,
+                "percent_start": 20,
+                "pixels": 20,
+                "line_width": 3,
+                "tiny_arrow_length": 1,
+                "arrow_angle": 35.0,
+                "arrow_color": "black"
+            },
+            "terminator_info" : {
+                "percent_center": 50,
+                "base_width": 4,
+                "base_height": 16,
+                "top_width": 12,
+                "top_height": 4,
+                "internal_color": "#EA6062",
+                "border_color": "black",
+                "border_width": 2
+            },
+            "ribosome_site_info": {
+                "percent_center": 50,
+                "radius": 8,
+                "border_width": 1,
+                "border_color": "black",
+                "internal_color": "#bb99ff"
+            },
+            "cds_info": {
+                "percent_start": 90,
+                "arrow_height": 12
+            }
+    },
+
+    "feature_priority_list": [["assembly_gap",
+    "C_region",
+    "CDS",
+    "cds",
+    "centromere",
+    "D-loop",
+    "D_segment",
+    "exon",
+    "iDNA",
+    "intron",
+    "J_segment",
+    "mat_peptide",
+    "mobile_element",
+    "modified_base",
+    "mRNA",
+    "ncRNA",
+    "N_region",
+    "operon",
+    "polyA_site",
+    "precursor_RNA",
+    "prim_transcript",
+    "primer_bind",
+    "promoter",
+    "propeptide",
+    "protein_bind",
+    "rbs",
+    "repeat_region",
+    "rep_origin",
+    "ribozyme",
+    "rRNA",
+    "S_region",
+    "scar",
+    "sig_peptide",
+    "stem_loop",
+    "STS",
+    "telomere",
+    "terminator",
+    "tmRNA",
+    "transit_peptide",
+    "tRNA",
+    "V_region",
+    "V_segment",
+    "3'UTR",
+    "5'UTR"], 
+    ["regulatory","variation"],
+    ["oriT", "sensor_module"],
+    ["misc_binding", "misc_difference", "misc_recomb", "misc_RNA", "misc_structure", "backbone"],
+    ["gap", "unsure"], 
+    ["misc_feature","old_sequence"],
+    ["gene"],
+    ["source"]
+    ]
+}
+
+
+
+

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <!-- Base JS util files: --!>
+    <script src="JS/d3.min.js"></script>
+    <script src="JS/LayoutUtil.js"></script>
+    <script src="JS/d3SVGUtil.js"></script>
+    <script src="JS/Graph2DUtil.js"></script>
+    <!-- The Shell Config --!>
+    <script src="JS/BasicVizShellData.js"></script>
+    <!-- The Graph Config --!>
+    <script src="JS/BasicGraphData.js"></script>
+    <!-- The Tick Config --!>
+    <script src="JS/BasicAxisTicks.js"></script>
+    <!-- The Plasmid Config --!>
+    <script src="JS/PlasmidConfig.js"></script>
+    <!-- The Plasmid Object --!>
+    <script src="JS/plasmid_obj.js"></script>
+    <!-- The Plasmid Util Functions --!>
+    <script src="JS/PlasmidUtil.js"></script>
+
+    <style>
+        html, 
+        body {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+  <script>
+        
+        createEntireShellFromShellDataObject(BasicShellData);
+        plotPlasmidFeatures('graph-svg', window.plasmid_object)
+  </script>
+
+</body>
+</html>
+
+
