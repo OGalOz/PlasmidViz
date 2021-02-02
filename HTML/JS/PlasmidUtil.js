@@ -276,10 +276,20 @@ function plotPlasmidTerminator(d3svg, feature_info, p_cfg, num_feat) {
     let TerminatorPath = [point_a, point_b, point_c, point_d, point_e,
                           point_f, point_g, point_h]
 
-    addPolygon(d3svg, TerminatorPath, trm_i["internal_color"], 
+    let my_d3_dobj_list = addPolygon(d3svg, TerminatorPath, trm_i["internal_color"], 
                     id = 'shape-' + num_feat.toString() + '-terminator',
                     onclick_obj=null, ondrag_obj=null, 
                     border_color_info=trm_i["border_color_info"])
+    
+    let d3internal = my_d3_dobj_list[0]
+        d3internal.attr("data-feature_num", num_feat.toString())
+        d3internal.attr("data-origcolor", trm_i["internal_color"])
+        d3internal.attr("class", "plasmid-feature-" + num_feat.toString())
+
+    let d3external = my_d3_dobj_list[0]
+        d3external.attr("data-feature_num", num_feat.toString())
+        d3external.attr("data-origcolor", trm_i["border_color_info"]["color"] )
+        d3external.attr("class", "plasmid-feature-" + num_feat.toString())
 
                                             
    return null 
@@ -383,19 +393,23 @@ function plotPlasmidPromoter(d3svg, feature_info, p_cfg, num_feat) {
 
     // We draw the initial line and arc without the arrow
     // Line
-    makeLine(d3svg, prm_i["arrow_color"], 
+
+    let DDOBJ = {"origcolor": prm_i["arrow_color"]}
+    let a = makeLine(d3svg, prm_i["arrow_color"], 
             init_arc_start_coord[0],
             init_arc_start_coord[1],
             prm_arc_start_coord[0],
             prm_arc_start_coord[1],
             stroke_width = prm_i["line_width"],
-            id = 'shape-' + num_feat.toString() + '-promoter-1')
+            id = 'shape-' + num_feat.toString() + '-promoter-1',
+            onclick_info=null, onhover_info=null,DOM_data_obj=DDOBJ)
     // Arc
-    addArc(d3svg, feat_start_angle, feat_end_angle, cp_info["p_center"], 
+    let b = addArc(d3svg, feat_start_angle, feat_end_angle, cp_info["p_center"], 
                   inner_radius = prm_arc_start_radius - prm_i["line_width"]/2, 
                   outer_radius = prm_arc_start_radius + prm_i["line_width"]/2,
                   internal_color = prm_i["arrow_color"], 
-                  id = 'shape-' + num_feat.toString() + '-promoter-2')
+                  id = 'shape-' + num_feat.toString() + '-promoter-2',
+                  onclick_obj=null, onhover_obj=null, DOM_data_obj=DDOBJ)
 
     // We draw the two arrows
     // First we get the length of the arrows
@@ -414,21 +428,28 @@ function plotPlasmidPromoter(d3svg, feature_info, p_cfg, num_feat) {
                                                     tiny_arrow_length, 
                                                     orthogonal_angle - flag_angle_change)
     // Here we actually draw the two lines
-    makeLine(d3svg, prm_i["arrow_color"], 
+    let c = makeLine(d3svg, prm_i["arrow_color"], 
             prm_end_coord[0],
             prm_end_coord[1],
             flag_1_end_coords[0],
             flag_1_end_coords[1],
             stroke_width = prm_i["line_width"],
-            id = 'shape-' + num_feat.toString() + '-promoter-3')
+            id = 'shape-' + num_feat.toString() + '-promoter-3',
+            onclick_info=null, onhover_info=null,DOM_data_obj=DDOBJ)
     
-    makeLine(d3svg, prm_i["arrow_color"], 
+    let d = makeLine(d3svg, prm_i["arrow_color"], 
             prm_end_coord[0],
             prm_end_coord[1],
             flag_2_end_coords[0],
             flag_2_end_coords[1],
             stroke_width = prm_i["line_width"],
-            id = 'shape-' + num_feat.toString() + '-promoter-4')
+            id = 'shape-' + num_feat.toString() + '-promoter-4',
+            onclick_info=null, onhover_info=null,DOM_data_obj=DDOBJ)
+
+    for (d3obj of [a,b,c,d]) {
+        d3obj.attr("data-feature_num", num_feat.toString())
+        d3obj.attr("class", "plasmid-feature-" + num_feat.toString())
+    }
 
 }
 
@@ -532,13 +553,17 @@ function plotCDS(d3svg, feature_info, p_cfg, num_feat) {
     // We draw the triangle
     let path_coord = [triangle_end_coord, out_corner_coord, in_corner_coord]
     console.log(path_coord)
-    addPolygon(d3svg, path_coord, p_cfg["feature_arc_to_color"][feature_info[3]],
+    let d3pgn = addPolygon(d3svg, path_coord, p_cfg["feature_arc_to_color"][feature_info[3]],
                     id = 'shape-' + num_feat.toString() + '-cds',
-                    onclick_obj=null, ondrag_obj=null)
+                    onclick_obj=null, ondrag_obj=null)[0]
 
 
+    d3pgn.attr("data-feature_num", num_feat.toString())
+    d3pgn.attr("data-origcolor", p_cfg["feature_arc_to_color"][feature_info[3]])
+    d3pgn.attr("class", "plasmid-feature-" + num_feat.toString())
 
-   return null 
+
+   return d3pgn 
 
 }
 
@@ -576,16 +601,19 @@ function plotFeatureArc(d3svg, feature_info, p_cfg, num_feat) {
         "inp_out": arc_id
     }
     arc_DOM_data = {
-        'origcolor': p_cfg["feature_arc_to_color"][feature_info[3]]
+        'origcolor': p_cfg["feature_arc_to_color"][feature_info[3]],
+        'feature_num': num_feat
     }
 
-    addArc(d3svg, start_angle, end_angle, plasmid_center, 
+    let d3_obj = addArc(d3svg, start_angle, end_angle, plasmid_center, 
                   inner_radius = c_radius - pl_i["arc_width"]/2, 
                   outer_radius = c_radius + pl_i["arc_width"]/2, 
                   internal_color = p_cfg["feature_arc_to_color"][feature_info[3]], 
                   id = arc_id, onclick_obj=null, 
                   on_hover_obj=on_hover_info,
                   DOM_data_obj=arc_DOM_data, debug=true)
+
+    d3_obj.attr("class", "plasmid-feature-" + num_feat.toString())
 
 }
 
@@ -596,7 +624,12 @@ function ArcOnMouseHover(elem_id) {
      *
      */
     let my_elem =  document.getElementById(elem_id)
-    my_elem.style.fill = "yellow"
+    let feature_num = my_elem.dataset["feature_num"] 
+    let feat_dobj_list = document.getElementsByClassName('plasmid-feature-' + feature_num)
+    for (feat_dobj of feat_dobj_list) {
+        feat_dobj.style.fill = "yellow" 
+        feat_dobj.style.stroke = "yellow" 
+    }
 
     /*
     // Use D3 to select element, change color and size
@@ -609,13 +642,21 @@ function ArcOnMouseHover(elem_id) {
 
 function ArcOnMouseOut(elem_id) {
     /*
-     * d is the data given
-     * i is the index of the data
      *
      */
+    let dobj = document.getElementById(elem_id)
 
-    let myelem =  document.getElementById(elem_id)
-    myelem.style.fill = myelem.dataset.origcolor
+    //let feature_type = dobj.dataset["feature_type"]
+    // Below will be a string, not an int
+    let feature_num = dobj.dataset["feature_num"] 
+
+    let feat_dobj_list = document.getElementsByClassName('plasmid-feature-' + feature_num)
+
+
+    for (feat_dobj of feat_dobj_list) {
+        feat_dobj.style.fill = feat_dobj.dataset.origcolor
+        feat_dobj.style.stroke = feat_dobj.dataset.origcolor
+    }
     /*
     // Use D3 to select element, change color and size
     let orig_color = d3.select(this)

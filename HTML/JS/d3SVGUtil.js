@@ -141,15 +141,19 @@ function makeDashedLine(d3svg, start_coordinates, end_coordinates,
     /*
      * In order to draw a dashed line we need
      *      the slope of the line
+     * Args:
+     *  d3svg: The d3 svg object
+     *  start/end_coordinates: list<Num, Num> (x,y)
+     *  dash_length, break_length, stroke_width: Num
+     *  color: str
      *
-     *
-     *
+     * Returns dashed line object
      */
         
         let stroke_break_str = dash_length.toString() + ", " + 
                                 break_length.toString();
         
-        d3svg.append("line")
+      let a =  d3svg.append("line")
         .attr('x1', start_coordinates[0])
         .attr('y1', start_coordinates[1])
         .attr('x2', end_coordinates[0])
@@ -158,6 +162,7 @@ function makeDashedLine(d3svg, start_coordinates, end_coordinates,
         .attr("stroke-width", stroke_width)
         .style("stroke-dasharray", (stroke_break_str));  
         // ^ This line here!!
+    return a
 
 }
 
@@ -691,7 +696,7 @@ function addManyPointsToPlot(d3svg,
                             
 
 function makeLine(d3svg, color, x1, y1, x2, y2, stroke_width, id = null,
-                  onclick_info=null, onhover_info=null) {
+                  onclick_info=null, onhover_info=null, DOM_data_obj=null) {
     /*
      * Args: 
      *  d3svg: A d3 svg object
@@ -706,9 +711,11 @@ function makeLine(d3svg, color, x1, y1, x2, y2, stroke_width, id = null,
      *              mouseover & mouseout events
      *
      * Note: We need to make sure the numbers are relatively close to integers
+     *
+     * Returns the d3svg object
      */
 
-     return d3svg.append('line')
+     let a = d3svg.append('line')
          .attr('id', id)
          .attr('x1', x1.toFixed(2))
          .attr('y1', y1.toFixed(2))
@@ -716,8 +723,13 @@ function makeLine(d3svg, color, x1, y1, x2, y2, stroke_width, id = null,
          .attr('y2', y2.toFixed(2))
          .attr('stroke', color)
          .attr('stroke-width', stroke_width)
-         .attr('position', 'absolute')
-         ;
+         .attr('position', 'absolute');
+
+    if (!(DOM_data_obj == null)) {
+        addDomDataTod3SVGObject(a, DOM_data_obj)
+    }
+
+    return a
 
 }
 
@@ -732,6 +744,10 @@ function makeText(d3svg, font_weight, font_size, x, y, text_str, font_color,
      *      font_size, x, y: Number
      *      text_str: (str) Text you want to make
      *
+     *
+     *  Returns:
+     *      a: the d3 svg object
+     *
      */
     if (font_color == null) {
         font_color = "black"
@@ -740,8 +756,9 @@ function makeText(d3svg, font_weight, font_size, x, y, text_str, font_color,
         text_str = "Default Text"
     }
 
+    let a = null
     if (id_txt == null) {
-        d3svg.append('text')
+        a = d3svg.append('text')
             .attr('font-weight', font_weight)
             .attr('font-size', font_size)
             .attr('fill', font_color)
@@ -749,7 +766,7 @@ function makeText(d3svg, font_weight, font_size, x, y, text_str, font_color,
             .attr('y', y)
             .text(text_str);
     } else {
-         d3svg.append('text')
+        a = d3svg.append('text')
             .attr('font-weight', font_weight)
             .attr('font-size', font_size)
             .attr('fill', font_color)
@@ -758,7 +775,7 @@ function makeText(d3svg, font_weight, font_size, x, y, text_str, font_color,
             .attr('id', id_txt) 
             .text(text_str);
     }
-
+    return a
 }
 
 function addSinglePointToPlot(d3svg,
@@ -781,11 +798,14 @@ function addSinglePointToPlot(d3svg,
      * point_data: list<>
      * onclick_function: function
      *
+     *  Returns:
+     *      a: the d3 svg object
      */
 
+    let a = null
    if (point_shape == "circle") {
        if (point_data.length > 0) {
-        d3svg.append("circle")
+        a = d3svg.append("circle")
         .attr("cx", point_coordinates[0])
         .attr("cy", point_coordinates[1])
         .attr("r", point_radius)
@@ -805,6 +825,7 @@ function addSinglePointToPlot(d3svg,
    } else {
        throw "No code written for adding rects or triangles yet"
    }
+    return a 
         
 }
 
@@ -832,6 +853,9 @@ function addArc(d3svg, start_angle, end_angle, center_coordinates,
      *          in the form attribute: 'data-' + key: value
      *      
      *      Note, this can make semi circle if start & end are Pi away
+     *
+     *  Returns:
+     *      a: the d3 svg object
      */ 
 
     let tsl_str = center_coordinates[0].toString() + ',' + center_coordinates[1].toString()
@@ -850,29 +874,31 @@ function addArc(d3svg, start_angle, end_angle, center_coordinates,
 
     console.log(arcGenerator)
 
-    let x = d3svg.append('path')
+    let a = d3svg.append('path')
         .attr('id', id)
         .attr('transform', 'translate(' + tsl_str + ')')
         .attr('fill', internal_color)
         .attr('d', arcGenerator())
     
     if (!(onclick_obj == null)) {
-        x.on('click', function() {
+        a.on('click', function() {
             onclick_obj['func'](onclick_obj['inp'])
         })
     }
     if (!(on_hover_obj == null)) {
-        x.on('mouseover', function() {
+        a.on('mouseover', function() {
             on_hover_obj['func_over'](on_hover_obj["inp_over"])}) 
-        x.on('mouseout', function() {
+        a.on('mouseout', function() {
             on_hover_obj['func_out'](on_hover_obj["inp_out"])})
     }
 
     if (!(DOM_data_obj == null)) {
         for (k of Object.keys(DOM_data_obj)) {
-            x.attr('data-' + k.toString(), DOM_data_obj[k].toString())
+            a.attr('data-' + k.toString(), DOM_data_obj[k].toString())
         }
     }
+
+    return a
 
 }
 
@@ -886,6 +912,9 @@ function addPartialcircle(d3svg, start_angle, end_angle,
      *      internal_color, id: str
      *      
      *      Note, this can make semi circle if start & end are Pi away
+     *
+     *  Returns:
+     *      a: the d3 svg object
      */ 
 
     let tsl_str = center_coordinates[0].toString() + ',' + center_coordinates[1].toString()
@@ -895,11 +924,13 @@ function addPartialcircle(d3svg, start_angle, end_angle,
                          .startAngle(start_angle)
                          .endAngle(end_angle);
 
-    d3svg.append('path')
+    let a = d3svg.append('path')
         .attr('id', id)
         .attr('transform', 'translate(' + tsl_str + ')')
         .attr('fill', internal_color)
         .attr('d', arcGenerator())
+
+    return a
 
 }
 
@@ -924,29 +955,34 @@ function addPolygon(d3svg, path_coordinates, fill_color, id = null,
      *      width: Num
      *      [stroke-opacity]: Num
      *
+     *
+     * Returns:
+     *  list<a,b>
+     *      Where a and b are d3 svg objects
      */
     
     let points_str = ""
     for (let coord of path_coordinates) {
         points_str += coord.join(",") + " "
     }
-    let x = d3svg.append("polygon")
+    let a = d3svg.append("polygon")
          .attr('id', id)
          .attr('fill', fill_color)
          .attr('points', points_str)
 
     if (!(onclick_obj == null)) {
-        x.on('click', function() {
+        a.on('click', function() {
             onclick_obj['onclick_func'](onclick_obj['onclick_params'])
         })
     }
 
     if (!(ondrag_obj == null)) {
-        x.call(d3.drag().on("start", ondrag_obj['ondrag_func']))
+        a.call(d3.drag().on("start", ondrag_obj['ondrag_func']))
     }
 
+    let b = null
     if (!(border_color_info == null)) {
-       let y =  d3svg.append("polygon")
+       b =  d3svg.append("polygon")
          .attr('id', id)
          .attr('stroke', border_color_info["color"])
          .attr('stroke-width', border_color_info["width"])
@@ -954,15 +990,42 @@ function addPolygon(d3svg, path_coordinates, fill_color, id = null,
          .attr('points', points_str);
         
         if ("stroke_opacity" in border_color_info) {
-            y.attr('stroke-opacity', border_color_info["stroke_opacity"])
+            b.attr('stroke-opacity', border_color_info["stroke_opacity"])
         }
     }
+
+    return [a, b]
 
         
 
 }
        
 
+function addDomDataTod3SVGObject(d3_svg_obj, DOM_data_obj) {
+    /* This function adds data attributes like 'data-number'
+     *   to the DOM object d3_svg_obj, using the keys in 
+     *   DOM_data_obj. NOTE: DO NOT ADD 'data-' to the beginning
+     *   of the  DOM_data_obj keys, that is added within function.
+     *
+     *   Args:
+     *      d3_svg_obj: A shape of sorts on the svg created by d3
+     *      DOM_data_obj: object
+     *          data_key (str) -> data_value
+     *
+     *  Returns:
+     *      d3_svg_obj
+     *
+     *
+     *
+     */
 
+    if (!(DOM_data_obj == null)) {
+        for (k of Object.keys(DOM_data_obj)) {
+            d3_svg_obj.attr('data-' + k.toString(), DOM_data_obj[k].toString())
+        }
+    }
+
+    return d3_svg_obj
+}
 
 
