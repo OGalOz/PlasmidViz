@@ -144,6 +144,8 @@ function plotSingleFeature(d3svg, current_feat, p_cfg, num_feat) {
         plotCDS(d3svg, current_feat, p_cfg, num_feat)
     } else if (current_feat[3] == "promoter") {
         plotPlasmidPromoter(d3svg, current_feat, p_cfg, num_feat)
+    } else if (current_feat[3] == "terminator") {
+        plotPlasmidTerminator(d3svg, current_feat, p_cfg, num_feat)
     }
 
    return null 
@@ -152,7 +154,7 @@ function plotSingleFeature(d3svg, current_feat, p_cfg, num_feat) {
 
 
 
-function plotPlasmidTerminator(d3svg, feature_info, p_cfg) {
+function plotPlasmidTerminator(d3svg, feature_info, p_cfg, num_feat) {
     /*
      *  Args:
      *      d3svg: d3 svg object (selected)
@@ -172,7 +174,114 @@ function plotPlasmidTerminator(d3svg, feature_info, p_cfg) {
      *              plasmid_length: Num
      *              num_features: Num
      *              old_gb_name: str
+     *          feature_typ_info
+     *"             terminator_info":
+                        frac_center: .5, (Num) fraction within feature of center
+                        base_width_frac": 0.08, (Num) fraction of feature base length of T
+                        base_height_frac": 0.1, (Num) fraction of radius base height of T
+                        top_width_frac": 0.16,  (Num) fraction of feature, top of T
+                        top_height_frac": 0.04, (Num) fraction of radius height of top
+                        internal_color": "#EA6062" str internal color of polygon
+                        border_color_info": object
+                            color: str
+                            width: Num
      */
+
+    let cp_info = p_cfg["crnt_p_info"]
+    // terminator config info
+    let trm_i = p_cfg["feature_typ_info"]["terminator_info"]
+
+    if (!(trm_i["include_bool"])) {
+        // Arrow not included in output
+        return null
+    }
+
+    // The start/end locs of entire feature
+    let angle_start = (feature_info[0]/cp_info["plasmid_length"])*Math.PI*2
+    let angle_end = (feature_info[1]/cp_info["plasmid_length"])*Math.PI*2
+    let full_angle = angle_end - angle_start
+
+    // this radius
+    let strand = feature_info[2]
+    let crad = null
+    let mult_factor = null
+    let feat_cntr_angle = trm_i["frac_center"]*full_angle + angle_start 
+    if (strand == "+") {
+        mult_factor = 1
+        crad = cp_info["p_radius"]
+    } else if (strand == "-") {
+        mult_factor = -1
+        crad = cp_info["p_comp_radius"]
+    } else {
+        console.log("Cannot recognize strand in graphing Promoter")
+        return null
+    }
+    // First point of T
+    let point_a = calculateCirclePosition(cp_info["p_center"][0], 
+                                          cp_info["p_center"][1], 
+                                          crad, 
+                                          feat_cntr_angle + 
+                                          trm_i["base_width_frac"]*full_angle)
+
+    // Second point of T, above A
+    let point_b = calculateCirclePosition(cp_info["p_center"][0], 
+                                          cp_info["p_center"][1], 
+                                          crad*(1 + mult_factor*(trm_i["base_height_frac"])), 
+                                          feat_cntr_angle + 
+                                          trm_i["base_width_frac"]*full_angle)
+    
+    // Third point of T, next to B
+    let point_c = calculateCirclePosition(cp_info["p_center"][0], 
+                                          cp_info["p_center"][1], 
+                                          crad*(1 + mult_factor*(trm_i["base_height_frac"])), 
+                                          feat_cntr_angle + 
+                                          trm_i["top_width_frac"]*full_angle)
+
+    // Fourth point of T, above C
+    let point_d = calculateCirclePosition(cp_info["p_center"][0], 
+                                          cp_info["p_center"][1], 
+                                          crad*(1 + mult_factor*(trm_i["top_height_frac"])), 
+                                          feat_cntr_angle + 
+                                          trm_i["top_width_frac"]*full_angle)
+
+
+    // Fifth point of T, reflection across center from D
+    let point_e = calculateCirclePosition(cp_info["p_center"][0], 
+                                          cp_info["p_center"][1], 
+                                          crad*(1 + mult_factor*(trm_i["top_height_frac"])), 
+                                          feat_cntr_angle - 
+                                          trm_i["top_width_frac"]*full_angle)
+
+    // Sixth point of T, reflection across center from C
+    let point_f = calculateCirclePosition(cp_info["p_center"][0], 
+                                          cp_info["p_center"][1], 
+                                          crad*(1 + mult_factor*(trm_i["base_height_frac"])), 
+                                          feat_cntr_angle -
+                                          trm_i["top_width_frac"]*full_angle)
+    
+    // Seventh point of T, reflection across center from B
+    let point_g = calculateCirclePosition(cp_info["p_center"][0], 
+                                          cp_info["p_center"][1], 
+                                          crad*(1 + mult_factor*(trm_i["base_height_frac"])), 
+                                          feat_cntr_angle - 
+                                          trm_i["base_width_frac"]*full_angle)
+
+    // Eigth point of T, reflection from A
+    let point_h = calculateCirclePosition(cp_info["p_center"][0], 
+                                          cp_info["p_center"][1], 
+                                          crad, 
+                                          feat_cntr_angle -
+                                          trm_i["base_width_frac"]*full_angle)
+    
+    let TerminatorPath = [point_a, point_b, point_c, point_d, point_e,
+                          point_f, point_g, point_h]
+
+    addPolygon(d3svg, TerminatorPath, trm_i["internal_color"], 
+                    id = 'shape-' + num_feat.toString() + '-terminator',
+                    onclick_obj=null, ondrag_obj=null, 
+                    border_color_info=trm_i["border_color_info"])
+
+                                            
    return null 
 
 }
@@ -254,16 +363,18 @@ function plotPlasmidPromoter(d3svg, feature_info, p_cfg, num_feat) {
     // We get total distance to start of promoter arc
     // changed radius to promoter symbol
     let prm_height = prm_i["radius_frac_from"]*crad
-    console.log(prm_height)
     let prm_arc_start_radius = crad + prm_height*mult_factor
-    console.log(prm_arc_start_radius)
     // We get the promoter arc start point's coordinates
     let prm_arc_start_coord = calculateCirclePosition(cp_info["p_center"][0], 
                                                  cp_info["p_center"][1], 
                                                  prm_arc_start_radius, 
                                                  feat_start_angle)
-    console.log("PROMOTER ARC START:")
-    console.log(prm_arc_start_coord)
+    // End point coordinates
+    let prm_end_coord = calculateCirclePosition(cp_info["p_center"][0], 
+                                                 cp_info["p_center"][1], 
+                                                 crad + prm_height*mult_factor, 
+                                                 feat_end_angle)
+
     // We get the initial points on the plasmid
     let init_arc_start_coord = calculateCirclePosition(cp_info["p_center"][0], 
                                                  cp_info["p_center"][1], 
@@ -286,8 +397,41 @@ function plotPlasmidPromoter(d3svg, feature_info, p_cfg, num_feat) {
                   internal_color = prm_i["arrow_color"], 
                   id = 'shape-' + num_feat.toString() + '-promoter-2')
 
+    // We draw the two arrows
+    // First we get the length of the arrows
+    let tiny_arrow_length = cp_info["lesser_dimension_length"]*prm_i["tiny_arrow_frac"]
+    // Then we get the orthogonal angle to the line between center and end point
+    let orthogonal_angle = feat_end_angle - mult_factor*(Math.PI/2)
+    // Then we get the angle change in radians
+    let flag_angle_change = (Math.PI/180)*prm_i["arrow_angle"]
+    // Now we get the locs of the ends of the flags from the end point 
+    let flag_1_end_coords = calculateCirclePosition(prm_end_coord[0],
+                                                    prm_end_coord[1],
+                                                    tiny_arrow_length, 
+                                                    orthogonal_angle + flag_angle_change)
+    let flag_2_end_coords = calculateCirclePosition(prm_end_coord[0],
+                                                    prm_end_coord[1],
+                                                    tiny_arrow_length, 
+                                                    orthogonal_angle - flag_angle_change)
+    // Here we actually draw the two lines
+    makeLine(d3svg, prm_i["arrow_color"], 
+            prm_end_coord[0],
+            prm_end_coord[1],
+            flag_1_end_coords[0],
+            flag_1_end_coords[1],
+            stroke_width = prm_i["line_width"],
+            id = 'shape-' + num_feat.toString() + '-promoter-3')
+    
+    makeLine(d3svg, prm_i["arrow_color"], 
+            prm_end_coord[0],
+            prm_end_coord[1],
+            flag_2_end_coords[0],
+            flag_2_end_coords[1],
+            stroke_width = prm_i["line_width"],
+            id = 'shape-' + num_feat.toString() + '-promoter-4')
 
 }
+
 
 function plotCDS(d3svg, feature_info, p_cfg, num_feat) {
     /* 

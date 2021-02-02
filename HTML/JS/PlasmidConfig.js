@@ -104,20 +104,23 @@ window.plasmid_config_obj = {
             "include_bool" : true,
             "frac_start": .40,
             "line_width": 1,
-            "tiny_arrow_frac": .02,
+            "tiny_arrow_frac": .01,
             "arrow_angle": 35.0,
             "radius_frac_from": 0.1,
             "arrow_color": "black"
         },
         "terminator_info" : {
-            "percent_center": 50,
-            "base_width": 4,
-            "base_height": 16,
-            "top_width": 12,
-            "top_height": 4,
+            "include_bool": true,
+            "frac_center": .5,
+            "base_width_frac": 0.08,
+            "base_height_frac": 0.1,
+            "top_width_frac": 0.16,
+            "top_height_frac": 0.14,
             "internal_color": "#EA6062",
-            "border_color": "black",
-            "border_width": 2
+            "border_color_info": {
+                "color": "black",
+                "width": 2
+            }
         },
         "ribosome_site_info": {
             "percent_center": 50,

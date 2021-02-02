@@ -904,7 +904,8 @@ function addPartialcircle(d3svg, start_angle, end_angle,
 }
 
 function addPolygon(d3svg, path_coordinates, fill_color, id = null,
-                    onclick_obj=null, ondrag_obj=null) {
+                    onclick_obj=null, ondrag_obj=null, 
+                    border_color_info=null) {
     /*
      *
      * path_coordinates: list<coordinate>
@@ -917,6 +918,11 @@ function addPolygon(d3svg, path_coordinates, fill_color, id = null,
      * ondrag_obj: 
      *      ondrag_func: javascript function
      *      ondrag_params: list<>
+     *
+     * border_color_info: object
+     *      color: str
+     *      width: Num
+     *      [stroke-opacity]: Num
      *
      */
     
@@ -938,16 +944,21 @@ function addPolygon(d3svg, path_coordinates, fill_color, id = null,
     if (!(ondrag_obj == null)) {
         x.call(d3.drag().on("start", ondrag_obj['ondrag_func']))
     }
-         
-    /*
-    const {} = {}.insert('polygon')\n".format(const_str, js_feat['svg_name'])
-    js_str += ".attr('id', '{}')\n".format(js_feat['html_id'] + "-in")
-    js_str += ".attr('fill', '{}')\n".format(js_feat["internal_color"])
-    points_str = "{},{} {},{} {},{} ".format(
-        str(a[0]),str(a[1]),str(b[0]),str(b[1]),
-        str(c[0]),str(c[1]))
-    js_str += ".attr('points', '{}');\n\n".format(points_str)
-    */
+
+    if (!(border_color_info == null)) {
+       let y =  d3svg.append("polygon")
+         .attr('id', id)
+         .attr('stroke', border_color_info["color"])
+         .attr('stroke-width', border_color_info["width"])
+         .attr('fill', "none")
+         .attr('points', points_str);
+        
+        if ("stroke_opacity" in border_color_info) {
+            y.attr('stroke-opacity', border_color_info["stroke_opacity"])
+        }
+    }
+
+        
 
 }
        
