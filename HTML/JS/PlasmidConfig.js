@@ -113,9 +113,9 @@ window.plasmid_config_obj = {
             "include_bool": true,
             "frac_center": .5,
             "base_width_frac": 0.08,
-            "base_height_frac": 0.1,
-            "top_width_frac": 0.16,
-            "top_height_frac": 0.14,
+            "base_height_frac": 0.085,
+            "top_width_frac": 0.18,
+            "top_height_frac": 0.105,
             "internal_color": "#EA6062",
             "border_color_info": {
                 "color": "black",
